@@ -1,6 +1,6 @@
 # Intro 
 
-This package is used to track email opens and clicks on a Sole SaaS platform.
+This package is used to track sent emails Sole platform.
 
 
 # Installation
