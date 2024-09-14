@@ -1,0 +1,34 @@
+{
+    "name": "productshake/email-tracker",
+    "description": "A package to track and log sent emails in a centralized SaaS system.",
+    "license": "MIT",
+    "version": "1.0.0",
+    "autoload": {
+        "psr-4": {
+            "Productshake\\EmailTracker\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "William",
+            "email": "hi@productshake.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {
+        "php": "^7.4|^8.0",
+        "guzzlehttp/guzzle": "^7.0",
+        "illuminate/support": "^8.0|^9.0|^10.0|^11.0",
+        "illuminate/mail": "^8.0|^9.0|^10.0|^11.0"
+    },
+    "require-dev": {
+        "roave/security-advisories": "dev-latest"
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Productshake\\EmailTracker\\Providers\\EmailTrackerServiceProvider"
+            ]
+        }
+    }
+}
