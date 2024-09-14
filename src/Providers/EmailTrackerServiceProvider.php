@@ -9,7 +9,9 @@ use Productshake\EmailTracker\Listeners\TrackEmail;
 
 class EmailTrackerServiceProvider extends ServiceProvider
 {
-    public function register() {}
+    public function register()
+    {
+    }
 
     public function boot()
     {

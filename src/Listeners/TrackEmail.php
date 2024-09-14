@@ -35,7 +35,7 @@ class TrackEmail
             'project_ulid' => config('sole-email-tracker.project_ulid'),
         ];
 
-        $client = new Client;
+        $client = new Client();
 
         try {
             $client->post(config('sole-email-tracker.saas_endpoint').'/api/v1/email-sent', [
