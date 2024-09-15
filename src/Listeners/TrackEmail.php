@@ -38,16 +38,13 @@ class TrackEmail
         $client = new Client();
 
         try {
-            $response = $client->post(config('sole-email-tracker.saas_endpoint').'/api/v1/email-sent', [
+            $client->post('https://sole.sh/api/v1/email-sent', [
                 'json' => $emailData,
             ]);
-
-            Log::info('API Response: ' . $response->getBody()->getContents());
 
         } catch (GuzzleException|Exception $e) {
             Log::error('Error sending email data to centralized SaaS system: ', [
                 'error' => $e->getMessage(),
-                'email_data' => $emailData,
             ]);
         }
     }
