@@ -30,7 +30,7 @@ class TrackEmail
         $emailData = [
             'to' => implode(',', $toEmails),
             'subject' => $subject,
-            'content' => $content, // Store either HTML or text content
+            'content' => $content,
             'sent_at' => Carbon::now(),
             'project_ulid' => config('sole-email-tracker.project_ulid'),
         ];
@@ -38,11 +38,17 @@ class TrackEmail
         $client = new Client();
 
         try {
-            $client->post(config('sole-email-tracker.saas_endpoint').'/api/v1/email-sent', [
+            $response = $client->post(config('sole-email-tracker.saas_endpoint').'/api/v1/email-sent', [
                 'json' => $emailData,
             ]);
+
+            Log::info('API Response: ' . $response->getBody()->getContents());
+
         } catch (GuzzleException|Exception $e) {
-            Log::error('Error sending email data to centralized SaaS system: '.$e->getMessage());
+            Log::error('Error sending email data to centralized SaaS system: ', [
+                'error' => $e->getMessage(),
+                'email_data' => $emailData,
+            ]);
         }
     }
 }
