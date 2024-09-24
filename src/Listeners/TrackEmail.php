@@ -7,6 +7,7 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Mail\Events\MessageSent;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Log;
 use Symfony\Component\Mime\Address;
 
@@ -14,6 +15,10 @@ class TrackEmail
 {
     public function handle(MessageSent $event)
     {
+        if (App::environment('local')) {
+            return;
+        }
+
         $message = $event->message;
 
         $toAddresses = $message->getTo();
