@@ -16,27 +16,38 @@ class TrackEmail
     {
         $message = $event->message;
 
-        $toAddresses = $message->getTo() ?? [];
-        $toEmails = array_filter(array_map(static function ($address) {
-            // SwiftMailer uses a string for the email address, while Symfony Mailer uses the Address object
+        $toAddresses = $message->getTo();
+
+        $toEmails = array_map(static function ($address, $name) {
+            // SwiftMailer returns an associative array where the key is the email and the value is the name
             if ($address instanceof Address) {
                 return $address->getAddress();
             }
+
             if (is_string($address)) {
-                return $address;
+                return $address; // SwiftMailer scenario
+            }
+
+            if (is_string($name) && is_string($address)) {
+                return $address; // Fallback for other edge cases
             }
             return null;
-        }, $toAddresses));
+        }, array_keys($toAddresses), $toAddresses);
 
-        if (empty($toEmails)) {
-            Log::warning('No valid email addresses found in the "To" field.');
-            return;
-        }
-
+        $toEmails = array_filter($toEmails);
         $subject = $message->getSubject() ?: 'No Subject';
 
-        $htmlBody = $message->getHtmlBody();
-        $textBody = $message->getTextBody();
+        // Handle different mailer bodies for SwiftMailer and Symfony Mailer
+        if (method_exists($message, 'getHtmlBody')) {
+            // Symfony Mailer (Laravel 9+)
+            $htmlBody = $message->getHtmlBody();
+            $textBody = $message->getTextBody();
+        } else {
+            // SwiftMailer (Laravel 8 and below)
+            $htmlBody = $message->getBody();
+            $textBody = $message->getBody(); // Fallback to text content if HTML is not available
+        }
+
         $content = $htmlBody ?: $textBody ?: 'No Content';
 
         $emailData = [
