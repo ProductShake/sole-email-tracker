@@ -16,10 +16,22 @@ class TrackEmail
     {
         $message = $event->message;
 
-        $toAddresses = $message->getTo();
-        $toEmails = array_map(static function (Address $address) {
-            return $address->getAddress();
-        }, $toAddresses);
+        $toAddresses = $message->getTo() ?? [];
+        $toEmails = array_filter(array_map(static function ($address) {
+            // SwiftMailer uses a string for the email address, while Symfony Mailer uses the Address object
+            if ($address instanceof Address) {
+                return $address->getAddress();
+            }
+            if (is_string($address)) {
+                return $address;
+            }
+            return null;
+        }, $toAddresses));
+
+        if (empty($toEmails)) {
+            Log::warning('No valid email addresses found in the "To" field.');
+            return;
+        }
 
         $subject = $message->getSubject() ?: 'No Subject';
 
