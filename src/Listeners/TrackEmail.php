@@ -23,23 +23,17 @@ class TrackEmail
 
         $toAddresses = $message->getTo();
 
-        $toEmails = array_map(static function ($address, $name) {
-            // SwiftMailer returns an associative array where the key is the email and the value is the name
-            if ($address instanceof Address) {
-                return $address->getAddress();
-            }
+        $toEmail = null;
+        if (!empty($toAddresses)) {
+            $firstAddress = reset($toAddresses);
+            $toEmail = $firstAddress instanceof Address ? $firstAddress->getAddress() : $firstAddress;
+        }
 
-            if (is_string($address)) {
-                return $address; // SwiftMailer scenario
-            }
+        // Ensure $toEmail is not empty
+        if (empty($toEmail)) {
+            $toEmail = 'mail-not-catched@no.mails';
+        }
 
-            if (is_string($name) && is_string($address)) {
-                return $address; // Fallback for other edge cases
-            }
-            return null;
-        }, array_keys($toAddresses), $toAddresses);
-
-        $toEmails = array_filter($toEmails);
         $subject = $message->getSubject() ?: 'No Subject';
 
         // Handle different mailer bodies for SwiftMailer and Symfony Mailer
@@ -56,7 +50,7 @@ class TrackEmail
         $content = $htmlBody ?: $textBody ?: 'No Content';
 
         $emailData = [
-            'to' => implode(',', $toEmails),
+            'to' => $toEmail,
             'subject' => $subject,
             'content' => $content,
             'sent_at' => Carbon::now(),
