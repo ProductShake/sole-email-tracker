@@ -66,7 +66,9 @@ class TrackEmail
 
         } catch (GuzzleException|Exception $e) {
             Log::error('Error sending email data to centralized SaaS system: ', [
-                'error' => $e->getMessage(),
+                'message' => $e->getMessage(),
+                'emailData' => $emailData,
+                'status_code' => $e->getCode(),
             ]);
         }
     }
