@@ -61,11 +61,14 @@ class TrackEmail
 
         try {
             $client->post('https://sole.sh/api/v1/email-sent', [
+                'headers' => [
+                    'Content-Type' => 'application/json',
+                    'Accept' => 'application/json',
+                ],
                 'json' => $emailData,
             ]);
-
         } catch (GuzzleException|Exception $e) {
-            Log::error('Error sending email data to centralized SaaS system: ', [
+            Log::error('Error sending email data to centralized system: ', [
                 'message' => $e->getMessage(),
                 'emailData' => $emailData,
                 'status_code' => $e->getCode(),
@@ -73,3 +76,4 @@ class TrackEmail
         }
     }
 }
+
